@@ -2,20 +2,39 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+
+@layer components{
+  .inputBox{
+    @apply w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-purple-200 focus:outline-none;
+   }
+  
+ 
+  .login{
+    @apply absolute right-4 mt-2 w-64 bg-white rounded-md shadow-lg overflow-hidden transition-all duration-300;
   }
+  .input-box{
+   @apply mt-2 w-full p-2 border border-gray-300 rounded-md ;
+  }
+  .dropdown {
+    @apply  absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg overflow-hidden transition-all duration-300 z-50;
+  }
+.dashboard-nav{
+  @apply block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  .dropdown::before {
+    content: "";
+    position: absolute;
+    top: -10px; /* Position the arrow above the dropdown */
+    left: 50%; /* Center the arrow horizontally */
+    transform: translateX(-50%); /* Align the arrow center */
+    border-width: 10px 10px 0 10px; /* Arrow dimensions */
+    border-style: solid;
+    border-color: white transparent transparent transparent; /* Arrow color and direction */
+  }
+  .contact-form{
+    @apply max-w-4xl mx-auto mt-16 bg-white p-8 shadow-md rounded-lg;
+   }
+ 
 }
