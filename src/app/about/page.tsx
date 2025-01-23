@@ -116,7 +116,7 @@ const About = () => {
             Join thousands of users who are managing their finances better with
             Wealthcraft.
           </p>
-         <Link href="/#"> <button className="mt-6 bg-white text-purple-600 px-6 py-3 rounded-md font-bold hover:bg-gray-100 transition duration-300">
+         <Link href="https://square-liger-98.accounts.dev/sign-in?sign_in_force_redirect_url=http%3A%2F%2Flocalhost%3A3000%2FDashboard&redirect_url=http%3A%2F%2Flocalhost%3A3000%2F"> <button className="mt-6 bg-white text-purple-600 px-6 py-3 rounded-md font-bold hover:bg-gray-100 transition duration-300">
             Sign Up Now
           </button></Link>
         </section>

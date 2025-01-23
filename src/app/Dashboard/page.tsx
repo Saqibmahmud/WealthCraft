@@ -1,39 +1,85 @@
 'use client'
 
 import { Chart as ChartJs } from 'chart.js';
-ChartJs.register(...registerables);
 import {registerables} from 'chart.js'
-import { FaPiggyBank } from "react-icons/fa6";
+ChartJs.register(...registerables);
+
 import { Bar,Doughnut } from 'react-chartjs-2';
-import React from 'react';
-import { useUser } from '@clerk/nextjs';
-import { IoIosSettings } from "react-icons/io";
-import { MdCurrencyExchange } from "react-icons/md";
-import { SiGoogleanalytics } from "react-icons/si";
-import { MdDashboard } from "react-icons/md";
-import Feedback from '../../../Components/Feedback/page';
+import React, { useEffect, useState, useMemo } from 'react';
+import { useAuth, useUser } from '@clerk/clerk-react';
+import AsideDashboard from '../../../Components/Aside_Dashbar/page';
+import { transactions } from '../../../lib/transactions';
 
+export default function Dashboard() {
+  const auth = useAuth();
+  const { user } = useUser();
 
-export default  function  Dashboard() {
-  const user=  useUser();
+  interface TransactionResponse {
+    net_income: number;
+    total_income: number;
+    total_expense: number;
+    total_investment: number;
+  }
+
+  const [response, setResponse] = useState<TransactionResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+
+  // Move getLastThreeMonths inside useMemo
+  const lastThreeMonths = useMemo(() => {
+    const today = new Date();
+    const months: string[] = []; 
+    for (let i = 2; i >= 0; i--) {
+      let monthIndex = today.getMonth() - i;
+      if (monthIndex < 0) {
+        monthIndex += 12;
+      }
+
+      const monthName = new Date(today.getFullYear(), monthIndex, 1).toLocaleString("default", {
+        month: "long",
+      });
+
+      months.push(monthName);
+    }
+    return months;
+  }, []);
+
+  useEffect(() => {
+    async function fetchtransactions(){
+      try {
+        if (user?.id) {
+          const result = await transactions(user.id);
+          setResponse(result);
+        } else {
+          throw new Error("User ID is undefined");
+        }
+      }
+      catch(err:any){
+        setError(err);
+      }
+      finally{
+        setLoading(false);
+      }
+    }
+
+    if (auth.isSignedIn) {
+      fetchtransactions();
+    }
+  }, [user?.id, auth.isSignedIn]);
+
+  
+  if (!auth.isSignedIn || loading) {
+    return <div>Loading....</div>;
+  }
   
   return (
+    
     <>
     
     <div className="min-h-screen bg-black text-white flex">
       {/* Sidebar */}
-      <aside className="w-64 bg-gray-800 p-6 max-h-738 rounded-md " >
-        <div className="mb-10"> 
-          <h1 className=" ml-11 text-2xl font-bold">{user.user?.username}</h1>
-        </div>
-        <ul >
-          <li className="mb-4 m-11 text-lg  border-white border-2 rounded-3xl px-3 py-3 "><i className="fa-solid fa-house"></i><a href="/Dashboard" className='flex items-center space-x-2 '> <MdDashboard className='text-2xl flex-shrink-0'/><span className="truncate">Dashboard</span></a></li>
-          <li className="mb-4 m-11 text-lg hover: border-white hover:border-2 hover:rounded-3xl hover:px-2 py-3 transition-all duration-100" ><a href="#" className='flex items-center space-x-2 '> <SiGoogleanalytics className='text-2xl flex-shrink-0' /><span>Analytics</span></a></li>
-          <li className="mb-4 m-11 text-lg hover: border-white hover:border-2 hover:rounded-3xl hover:px-3 py-3 transition-all duration-100"><a href="#" className='flex items-center space-x-2 '><FaPiggyBank className='text-2xl flex-shrink-0'/><span>Savings</span></a></li>
-          <li className="mb-4  m-11 text-lg  hover: border-white hover:border-2 hover:rounded-3xl hover:pl-2 hover:pr-12 py-3 transition-all duration-100"><a href="#" className='flex items-center space-x-2 '><MdCurrencyExchange  className='text-2xl flex-shrink-0'/><span className="truncate">Transactions</span></a></li>
-          <li className=" m-11 text-lg hover: border-white hover:border-2 hover:rounded-3xl hover:px-3 py-3 transition-all duration-100"><a href="#" className='flex items-center space-x-2  ' ><IoIosSettings className='text-2xl flex-shrink-0' /><span>Settings</span></a></li>
-        </ul>
-      </aside>
+      <AsideDashboard/>
+      
       
 
       {/* Main Content */}
@@ -43,19 +89,24 @@ export default  function  Dashboard() {
         <div className="grid grid-cols-4 gap-1 mb-6 bg-yellow-100 rounded-3xl h-28">
           <div className=" p-4 rounded-lg  bg-yellow-100  border-black border-2 ">
             <h3 className="text-lg  text-black font-medium">Available Balance</h3>
-            <p className="text-xl text-black mt-5 font-bold">176438Tk</p>
+            <p className="text-xl text-black mt-5 font-bold"> {response?.net_income }
+
+
+
+
+            </p>
           </div>
           <div className="p-4 rounded-lg  bg-yellow-100  border-black border-2">
             <h3 className="text-lg  text-black font-medium">Income</h3>
-            <p className="text-xl text-black mt-5  font-bold">40000Tk</p>
+            <p className="text-xl text-black mt-5  font-bold">{response?.total_income}</p>
           </div>
           <div className="p-4 rounded-lg  bg-yellow-100  border-black border-2">
             <h3 className="text-lg  text-black font-medium">Spent</h3>
-            <p className="text-xl text-black  mt-5 font-bold">35787Tk</p>
+            <p className="text-xl text-black  mt-5 font-bold">{response?.total_expense}</p>
           </div>
           <div className="p-4 rounded-lg  bg-yellow-100  border-black border-2">
             <h3 className="text-lg  text-black font-medium">Investment</h3>
-            <p className="text-xl text-black mt-5 font-bold">40000Tk</p>
+            <p className="text-xl text-black mt-5 font-bold">{response?.total_investment}</p>
           </div>
         </div>
         
@@ -67,12 +118,12 @@ export default  function  Dashboard() {
             <p>
               <Bar //self closing tag
               data={{
-                labels:['Investing','Salary','Loan'] ,
+                labels: lastThreeMonths,
                 datasets:[{
                   label:'Income',
                   data:[200,300,500],// ekhane api theke  dtaa fetch kore boashno hobe pore
                   backgroundColor:[
-                    'rgba(250,235,129,0.8)',
+                    'rgba(128,50,128,0.9)',
                      //'rgba(250,192,19,0.8)',
                       //'rgba(253,135,135,0.8)'
 
@@ -113,8 +164,8 @@ export default  function  Dashboard() {
         </div>
        
         {/* Transactions and My Cards */}
-        <div className="grid grid-cols-2  mt-12">
-          <div className="bg-gray-800 p-6 rounded">
+        <div className="grid grid-cols-2  mt-12  gap-4">
+          <div className="bg-gray-800 p-6 rounded-3xl  mb-10">
             <h3 className="text-lg font-medium mb-4">Transactions</h3>
             <ul>
               <li className="mb-2">20000Tk - House Rent</li>
@@ -123,7 +174,7 @@ export default  function  Dashboard() {
               <li className="mb-2">10000Tk - Loan Payment</li>
             </ul>
           </div>
-          <div className="bg-gray-800 p-6 rounded">
+          <div className="bg-gray-800 p-6 rounded-3xl  mb-10">
             <h3 className="text-lg font-medium mb-4">My Cards</h3>
             <div className="bg-gray-700 p-4 rounded">
               <p className="text-lg font-medium">1437 6735 **** ****</p>
@@ -135,7 +186,8 @@ export default  function  Dashboard() {
         </div>
        
       </main>
-    </div>
+    </div> 
+   
     </>
   );
 }

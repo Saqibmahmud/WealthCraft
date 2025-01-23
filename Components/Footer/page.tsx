@@ -1,15 +1,22 @@
+'use client'
 import React from 'react'
 import { Footer } from 'flowbite-react'
+import { useAuth } from '@clerk/nextjs'
 
 const FooterComponent = () => {
+const auth= useAuth()
+
+
+
+
   return (
 
 
-<footer className="bg-white dark:bg-gray-900">
+<footer className={auth.isSignedIn?  "bg-black dark:bg-gray-900 text-white":  "bg-white dark:bg-gray-900"}            >
     <div className="mx-auto w-full max-w-screen-xl">
       <div className="grid grid-cols-2 gap-8 px-4 py-6 lg:py-8 md:grid-cols-4">
         <div>
-            <h2 className="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Company</h2>
+            <h2 className="mb-6 text-sm font-semibol uppercase text-purple-400">Company</h2>
             <ul className="text-gray-500 dark:text-gray-400 font-medium">
                 <li className="mb-4">
                     <a href="#" className=" hover:underline">About</a>
@@ -26,7 +33,7 @@ const FooterComponent = () => {
             </ul>
         </div>
         <div>
-            <h2 className="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Help center</h2>
+            <h2 className="mb-6 text-sm font-semibold uppercase text-purple-400">Help center</h2>
             <ul className="text-gray-500 dark:text-gray-400 font-medium">
                 <li className="mb-4">
                     <a href="#" className="hover:underline">Discord Server</a>
@@ -43,7 +50,7 @@ const FooterComponent = () => {
             </ul>
         </div>
         <div>
-            <h2 className="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Legal</h2>
+            <h2 className="mb-6 text-sm font-semibold uppercase text-purple-400">Legal</h2>
             <ul className="text-gray-500 dark:text-gray-400 font-medium">
                 <li className="mb-4">
                     <a href="#" className="hover:underline">Privacy Policy</a>
@@ -57,7 +64,7 @@ const FooterComponent = () => {
             </ul>
         </div>
         <div>
-            <h2 className="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Download</h2>
+            <h2 className="mb-6 text-sm font-semibold uppercase text-purple-400">Download</h2>
             <ul className="text-gray-500 dark:text-gray-400 font-medium">
                 <li className="mb-4">
                     <a href="#" className="hover:underline">iOS</a>

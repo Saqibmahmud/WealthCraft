@@ -1,6 +1,6 @@
 import { useRouter } from 'next/navigation'
 import React, { FormEvent, useState } from 'react'
-import login from '../../lib/login';
+import {login} from '../../lib/user';
 import Link from 'next/link';
 
 const Login = () => {

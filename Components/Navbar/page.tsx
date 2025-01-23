@@ -44,16 +44,18 @@ const NavbarComponent = () => {
       <Navbar.Link href="/services" className="text-lg"><b>Services</b></Navbar.Link>
       <Navbar.Link href="/pricing" className="text-lg"><b>Pricing</b></Navbar.Link>
       <Navbar.Link href="/contact" className="text-lg"><b>Contact</b></Navbar.Link>
-      <Navbar.Link ><b className="cursor-pointer  border-2 border-black-500 rounded-lg p-3 text-center text-2xl" > <SignedOut>
+      <Navbar.Link className="cursor-pointer  font-semibold rounded-3xl  text-lg  hover:px-12 hover:py-4 hover:bg-slate-400 text-black transition-transform">   <SignedOut>
        <SignInButton  />                   {/* .env file e force redirection er libnk disi ekhane na diye */}
     </SignedOut>
     
     <SignedIn  >
-  <UserButton />
+  <UserButton 
+ 
+  />
 </SignedIn>
       
    
-</b>
+
 </Navbar.Link>
 
        
