@@ -1,11 +1,9 @@
 'use client'
 import { Navbar } from "flowbite-react";
-import React, { useState } from 'react'
+import React from 'react'
 import Image from 'next/image'
 import image from '../../public/personal finance management.png'
-// import Link from "next/link";
-// import login from "../../lib/login";
-// import Login from "../Login/page";
+
 import {
   
   SignInButton,
@@ -17,15 +15,9 @@ import {
 
 
 const NavbarComponent = () => {
-  // const[inputData,setinputdata]=useState({
-  //   username:"" ,
-  //   password:""
-
-  // })
-  
-  //const [isDropDown,setDropdown]=useState(false);
+ 
   return (
-    <Navbar fluid rounded className="sticky top-0 bg-purple-500">
+    <Navbar fluid rounded className="sticky top-0 bg-purple-500 z-50">
     <Navbar.Brand href="/">
     <Image
   src={image}

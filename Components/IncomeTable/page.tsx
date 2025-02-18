@@ -2,8 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import { FaSearch, FaFilter, FaDownload } from "react-icons/fa";
 import axios from 'axios';
-import { getExpenses } from '../../lib/transactions';
 import * as XLSX from 'xlsx';
+import { getExpenses, getIncomes } from '../../lib/transactions';
 import { useUser } from '@clerk/nextjs';
 
 interface Expense {
@@ -14,7 +14,7 @@ interface Expense {
   ammount: number;
 }
 
-const ExpenseTable = () => {
+const IncomeTable = () => {
   const { user } = useUser();
 
   const [expenses, setExpenses] = useState<Expense[]>([]);
@@ -22,36 +22,37 @@ const ExpenseTable = () => {
   const [categoryFilter, setCategoryFilter] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  const exportToExcel = () => {
-     
-      const exportData = filteredExpenses.map(expense => ({
-        'Transaction ID': expense.transactionId,
-        'Date': new Date(expense.transactionDate).toLocaleDateString(),
-        'Description': expense.description,
-        'Category': expense.transactionCategory,
-        'Amount (Tk)': Number(expense.ammount).toFixed(2)
-      }));
   
-      // Create worksheet
-      const worksheet = XLSX.utils.json_to_sheet(exportData);
-      
-      
-      const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, 'Income_Transactions');
-      
-      // Generate and download Excel file
-      XLSX.writeFile(workbook, `Expense_Transactions_${new Date().toISOString().split('T')[0]}.xlsx`);
-    };
+  
+  const exportToExcel = () => {
+   
+    const exportData = filteredExpenses.map(expense => ({
+      'Transaction ID': expense.transactionId,
+      'Date': new Date(expense.transactionDate).toLocaleDateString(),
+      'Description': expense.description,
+      'Category': expense.transactionCategory,
+      'Amount (Tk)': Number(expense.ammount).toFixed(2)
+    }));
 
-  // Fetch expenses on component mount or when user.id changes
+    // Create worksheet
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    
+    // Create workbook and add worksheet
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Income_Transactions');
+    
+    // Generate and download Excel file
+    XLSX.writeFile(workbook, `Income_Transactions_${new Date().toISOString().split('T')[0]}.xlsx`);
+  };
+
+  
   useEffect(() => {
     const fetchExpenses = async () => {
       try {
         if (user?.id) {
-          const data = await getExpenses(user.id);
+          const data = await getIncomes(user.id);
           if (Array.isArray(data)) {
-            // Transform the data: format the date once as YYYY-MM-DD
+            
             const transformedData: Expense[] = data.map((expense: any) => ({
               transactionId: expense.transactionId,
               transactionDate: new Date(expense.transactionDate)
@@ -79,10 +80,6 @@ const ExpenseTable = () => {
     fetchExpenses();
   }, [user?.id]);
 
-  // Get unique categories from the data for the filter dropdown
-  const categories = expenses.length > 0 
-    ? [...new Set(expenses.map(expense => expense.transactionCategory))]
-    : [];
 
   
   const filteredExpenses = expenses.filter(expense => {
@@ -122,13 +119,12 @@ const ExpenseTable = () => {
         </legend>
 
         <button 
-                    onClick={exportToExcel}
-                    className="flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition-colors "
-                    disabled={filteredExpenses.length === 0}
-                  >
-                    <FaDownload /> Export to Excel
-                  </button>
-                
+            onClick={exportToExcel}
+            className="flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition-colors "
+            disabled={filteredExpenses.length === 0}
+          >
+            <FaDownload /> Export to Excel
+          </button>
         
     
         <div className="flex flex-wrap gap-4 mb-4">
@@ -143,17 +139,7 @@ const ExpenseTable = () => {
           </div>
           
           <div className="flex items-center">
-            <FaFilter className="w-5 h-5 text-gray-400 mr-2" />
-            <select
-              className="bg-gray-700 text-white rounded-lg px-4 py-2"
-              value={categoryFilter}
-              onChange={(e) => setCategoryFilter(e.target.value)}
-            >
-              <option value="">All Categories</option>
-              {categories.map(category => (
-                <option key={category} value={category}>{category}</option>
-              ))}
-            </select>
+           
           </div>
         </div>
 
@@ -219,4 +205,4 @@ const ExpenseTable = () => {
   );
 };
 
-export default ExpenseTable;
+export default IncomeTable;

@@ -11,7 +11,7 @@ const Layout = ({children}:{children:React.ReactNode}) => {
     <>
 
     <NavbarComponent/>
-    {/* <AsideDashboard/> */}
+    
     {children}
     < FooterComponent />
     

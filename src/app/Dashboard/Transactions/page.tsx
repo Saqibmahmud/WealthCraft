@@ -4,25 +4,24 @@ import { FaSearch, FaFilter, FaDownload } from "react-icons/fa";
 import axios from 'axios';
 import * as XLSX from 'xlsx';
 import { useUser } from '@clerk/nextjs';
-import AsideDashboard from '../../../Components/Aside_Dashbar/page';
+import AsideDashboard from '../../../../Components/Aside_Dashbar/page';
 
 interface Transaction {
   transactionId: string;
-  transactionDate: string; // Already formatted as YYYY-MM-DD
+  transactionDate: string; 
   description: string;
   transactionCategory: string;
-  transactionType: 'income' | 'expense';
+  transactionType?: 'income' | 'expense' ;
   ammount: number;
 }
 
-// Import the function you specified
 export async function allTransactions(userid: string) {
   const res = await axios.get('http://localhost:3001/budget-tracking/all', { params: { userid } });
   return res.data;
 }
 
 const TransactionTable = () => {
-  const { user } = useUser();
+  const { isLoaded, isSignedIn, user } = useUser();
 
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [dateFilter, setDateFilter] = useState('');
@@ -37,7 +36,7 @@ const TransactionTable = () => {
       'Date': new Date(transaction.transactionDate).toLocaleDateString(),
       'Description': transaction.description,
       'Category': transaction.transactionCategory,
-      'Type': transaction.transactionType,
+      'Type': transaction.transactionType || 'Unknown',
       'Amount (Tk)': Number(transaction.ammount).toFixed(2)
     }));
 
@@ -50,27 +49,46 @@ const TransactionTable = () => {
 
   useEffect(() => {
     const fetchTransactions = async () => {
+      setLoading(true);
+      setError(null);
+
       try {
-        if (user?.id) {
-          const data = await allTransactions(user.id);
-          if (Array.isArray(data)) {
-           
-            const transformedData: Transaction[] = data.map((transaction: any) => ({
-              transactionId: transaction.transactionId,
-              transactionDate: new Date(transaction.transactionDate)
-                .toISOString()
-                .split('T')[0],
-              description: transaction.description,
-              transactionCategory: transaction.transactionCategory,
-              transactionType: transaction.transactionType,
-              ammount: transaction.ammount,
-            }));
-            setTransactions(transformedData);
-          } else {
-            setError('No data received from server');
-          }
+        if (!isLoaded) {
+          console.log('Authentication is still loading');
+          return;
+        }
+
+        if (!isSignedIn) {
+          setError('Please sign in to view transactions');
+          setLoading(false);
+          return;
+        }
+
+        if (!user || !user.id) {
+          setError('User information is not available');
+          setLoading(false);
+          return;
+        }
+
+        const data = await allTransactions(user.id);
+        
+        if (Array.isArray(data)) {
+          const transformedData: Transaction[] = data.map((transaction: any) => ({
+            transactionId: transaction.transactionId || 'N/A',
+            transactionDate: transaction.transactionDate 
+              ? new Date(transaction.transactionDate).toISOString().split('T')[0]
+              : new Date().toISOString().split('T')[0],
+            description: transaction.description || 'No Description',
+            transactionCategory: transaction.transactionCategory || 'Uncategorized',
+            transactionType: 
+              transaction.transactionType === 'income' || transaction.transactionType === 'expense' 
+                ? transaction.transactionType 
+                : null, // Ensure only valid types are set
+            ammount: Number(transaction.ammount) || 0,
+          }));
+          setTransactions(transformedData);
         } else {
-          setError('User ID is not available');
+          setError('No data received from server');
         }
       } catch (err) {
         console.error('Error fetching transactions:', err);
@@ -81,9 +99,8 @@ const TransactionTable = () => {
     };
 
     fetchTransactions();
-  }, [user?.id]);
+  }, [isLoaded, isSignedIn, user?.id]);
 
- 
   const categories = transactions.length > 0 
     ? [...new Set(transactions.map(transaction => transaction.transactionCategory))]
     : [];
@@ -103,6 +120,25 @@ const TransactionTable = () => {
 
   const total = filteredTransactions.reduce((sum, transaction) => sum + transaction.ammount, 0);
 
+  // Loading state
+  if (!isLoaded) {
+    return (
+      <div className="bg-gray-800 min-h-[24rem] w-full mt-6 rounded-xl p-6">
+        <p className="text-white text-center">Loading authentication...</p>
+      </div>
+    );
+  }
+
+  // Not signed in state
+  if (!isSignedIn) {
+    return (
+      <div className="bg-gray-800 min-h-[24rem] w-full mt-6 rounded-xl p-6">
+        <p className="text-red-500 text-center">Please sign in to view transactions</p>
+      </div>
+    );
+  }
+
+  // Loading transactions state
   if (loading) {
     return (
       <div className="bg-gray-800 min-h-[24rem] w-full mt-6 rounded-xl p-6">
@@ -111,6 +147,7 @@ const TransactionTable = () => {
     );
   }
 
+  // Error state
   if (error) {
     return (
       <div className="bg-gray-800 min-h-[24rem] w-full mt-6 rounded-xl p-6">
@@ -120,10 +157,8 @@ const TransactionTable = () => {
   }
 
   return (
-
-<div className='flex'>
-  <AsideDashboard/>
-
+    <div className='flex'>
+      <AsideDashboard/>
     <div className="bg-gray-800 min-h-[24rem] w-10/12 max-w-full mt-6 rounded-xl p-6">
       <div className="space-y-6">
         <legend className="text-white text-xl font-semibold mb-4">
@@ -209,7 +244,9 @@ const TransactionTable = () => {
                   className={`border-b border-gray-700 hover:bg-gray-500 ${
                     transaction.transactionType === 'income' 
                       ? 'bg-green-800/20' 
-                      : 'bg-red-800/20'
+                      : transaction.transactionType === 'expense'
+                      ? 'bg-red-800/20'
+                      : 'bg-gray-800/20'
                   }`}
                 >
                   <td className="px-6 py-4 font-medium whitespace-nowrap">
@@ -228,9 +265,13 @@ const TransactionTable = () => {
                     <span className={`px-2 py-1 rounded text-xs ${
                       transaction.transactionType === 'income' 
                         ? 'bg-green-500/20 text-green-400' 
-                        : 'bg-red-500/20 text-red-400'
+                        : transaction.transactionType === 'expense'
+                        ? 'bg-red-500/20 text-red-400'
+                        : 'bg-gray-500/20 text-gray-400'
                     }`}>
-                      {transaction.transactionType.toUpperCase()}
+                      {transaction.transactionType 
+                        ? transaction.transactionType.toUpperCase() 
+                        : 'UNKNOWN'}
                     </span>
                   </td>
                   <td className="px-6 py-4">

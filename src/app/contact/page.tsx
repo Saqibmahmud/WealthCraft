@@ -1,16 +1,56 @@
+'use client'
 
-import React from "react";
+import React, { useState } from "react";
 import NavbarComponent from "../../../Components/Navbar/page";
 import FooterComponent from "../../../Components/Footer/page";
 
 import { Metadata } from "next";
+import { createNewFeedback } from "../../../lib/feedbak";
 
-export const metadata: Metadata = {
-  title: "Contact Us",
-  description: "Reach out to us for any inquiries or support.",
-};
+
 
 const Contact = () => {
+  const [desription,setDescription]=useState('') ;
+  const [name,setname]=useState('') ;
+  const[Email,setEmail]=useState('')  ;
+  const[subjet,setSubjet]=useState('')  ;
+  
+
+
+const handleSubmit=async(event:React.FormEvent<HTMLFormElement>)=>{
+
+
+try{
+  event.preventDefault();
+
+const response=await createNewFeedback(subjet,name,Email,desription)
+
+alert(response);
+
+setDescription('') ;
+setEmail('' ) ;
+setSubjet('')  ;
+setname('')  ;
+
+
+}
+catch(error){
+  console.error('Error creating expense:', error);
+  throw error;
+
+
+
+}
+}
+
+
+
+
+
+
+
+
+
   return (
     <>
     <NavbarComponent />
@@ -27,15 +67,15 @@ const Contact = () => {
      
       <section className='contact-form'>
         <h2 className="text-3xl font-bold text-purple-600 mb-6">Get in Touch</h2>
-        <form action="/send-message" method="post" className="space-y-6">
-          {/* Name */}
+        <form onSubmit={handleSubmit} className="space-y-6">
+          
           <div>
             <label className="block text-gray-700 font-medium mb-2">Your Name</label>
             <input
               type="text"
               name="name"
               className='w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-purple-200 focus:outline-none'
-              placeholder="Enter your name"
+              placeholder="Enter your name"value={name} onChange={(e)=>{setname(e.target.value)}}
               required
             />
           </div>
@@ -47,7 +87,7 @@ const Contact = () => {
               type="email"
               name="email"
               className='w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-purple-200 focus:outline-none'
-              placeholder="Enter your email"
+              placeholder="Enter your email" value={Email} onChange={(e)=>{setEmail(e.target.value)}}
               required
             />
           </div>
@@ -59,7 +99,7 @@ const Contact = () => {
               type="text"
               name="subject"
               className='w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-purple-200 focus:outline-none'
-              placeholder="Enter the subject"
+              placeholder="Enter the subject" value={subjet} onChange={(e)=>{setSubjet(e.target.value)}}
               required
             />
           </div>
@@ -71,8 +111,8 @@ const Contact = () => {
               name="message"
               className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-purple-200 focus:outline-none"
               rows={5}
-              placeholder="Write your feedback or message here..."
-              required
+              placeholder="Write your feedback or message here..."  value={desription} onChange={(e)=>{setDescription(e.target.value)}}
+              required 
             ></textarea>
           </div>
 
@@ -80,6 +120,8 @@ const Contact = () => {
           <button
             type="submit"
             className="w-full bg-purple-600 text-white py-3 rounded-md font-bold hover:bg-purple-700 transition duration-300"
+          
+          
           >
             Send Message
           </button>

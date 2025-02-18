@@ -1,15 +1,35 @@
 'use client'
-import React from 'react'
+import React, { useState } from 'react'
 import Image from 'next/image'
 import mobile_pic from '../../public/mobile_pic.png'
 import Link from 'next/link'
 import Feedback from '../Feedback/page'
 import { useAuth } from '@clerk/nextjs'
-import { FaCheckCircle } from "react-icons/fa";
+import { FaCheckCircle, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 const Homepage = () => {
   const { isSignedIn } = useAuth();
 
+  const [startIndex, setStartIndex] = useState(0);
+  const visibleFeatures = 3;
+
+
+  const handleNext = () => {
+    if (startIndex + visibleFeatures < features.length) {
+      setStartIndex(startIndex + 1);
+    } else {
+      setStartIndex(0);
+    }
+  };
+
+  const handlePrev = () => {
+    if (startIndex > 0) {
+      setStartIndex(startIndex - 1);
+    }
+    else{
+      setStartIndex(features.length - visibleFeatures);
+    }
+  };
   const features = [
     {
       title: "Expense Tracking",
@@ -30,9 +50,19 @@ const Homepage = () => {
       title: "Financial Reports",
       description: "Generate detailed reports and insights about your spending habits",
       icon: "📑"
+    },
+    {
+      title: "Currency Conversion",
+      description: "Automatically convert to your local currency",
+      icon: "💱",
+    },
+    {
+      title: "Ask Ai",
+      description: "Ask Ai any question related to finance",
+      icon: "🤖"
     }
   ];
-
+  const totalFeatures = features.length; 
   const pricingPlans = [
     {
       name: "Basic",
@@ -72,9 +102,9 @@ const Homepage = () => {
   ];
 
   return (
-    <div className="bg-gray-50 min-h-screen">
+    <div className="bg-gray-50 min-h-screen w-full">
       {/* Hero Section */}
-      <header className="max-w-7xl mx-auto py-20 px-6 md:px-12 flex flex-col md:flex-row items-center justify-between">
+      <header className="max-w-7xl mx-auto py-20 px-6 md:px-12 flex flex-col md:flex-row items-center justify-between relative ">
         <div className="md:w-1/2 text-center md:text-left">
           <h1 className="text-6xl md:text-5xl font-bold text-gray-900 leading-snug">
             Do <span className="text-purple-600">more</span> with your money
@@ -101,7 +131,9 @@ const Homepage = () => {
             <span className="text-red-500">50% off</span>
           </p>
         </div>
-        <Feedback />
+        
+        <Feedback/>
+      
         <div className="mt-10 md:mt-0 md:w-1/2 flex justify-center md:justify-end md:mr-2">
           <div className="md:mr-4 w-[280px] h-[550px]">
             <Image
@@ -112,25 +144,57 @@ const Homepage = () => {
           </div>
         </div>
       </header>
+   
 
-      {/* Features Section */}
-      <section className="bg-white py-20 mt-10">
-        <div className="max-w-7xl mx-auto px-6 md:px-12">
-          <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
-            Popular Features
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mt-8">
+    
+
+<section className="bg-white py-20 mt-10">
+  <div className="max-w-7xl mx-auto px-6 md:px-12">
+    <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
+      Popular Features
+    </h2>
+    <div className=" w-full">
+      <div className="flex items-center  ">
+        <button
+          onClick={handlePrev}
+          className="p-2 bg-gray-200 rounded-full shadow-md disabled:opacity-50 cursor-pointer "
+          
+        >
+          <FaChevronLeft size={24} />
+        </button>
+        
+        <div className=" overflow-hidden">
+          <div
+            className="flex transition-transform duration-300 ease-in-out "
+            style={{
+              transform: `translateX(-${(startIndex * 100) / visibleFeatures}%)`,
+              width: `${(totalFeatures / visibleFeatures) * 100}%`
+            }}
+          >
             {features.map((feature, index) => (
-              <div key={index} className="p-6 bg-gray-50 rounded-xl">
-                <div className="text-4xl mb-4">{feature.icon}</div>
+              <div
+                key={index}
+                className="w-1/4 p-6 bg-gray-50 rounded-xl flex-shrink-0 "
+              >
+                <div className="text-4xl mb-4 ">{feature.icon}</div>
                 <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
                 <p className="text-gray-600">{feature.description}</p>
               </div>
             ))}
           </div>
         </div>
-      </section>
-
+        
+        <button
+          onClick={handleNext}
+          className="p-2 bg-gray-200 rounded-full shadow-md disabled:opacity-50 cursor-pointer"
+         
+        >
+          <FaChevronRight size={24} />
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
       {/* Pricing Section */}
       <section className="py-20 mt-10 mb-10">
         <div className="max-w-7xl mx-auto px-6 md:px-12">

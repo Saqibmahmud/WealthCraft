@@ -4,6 +4,11 @@ import { FaPiggyBank } from "react-icons/fa6";
 import { IoIosSettings } from "react-icons/io";
 import { MdCurrencyExchange, MdDashboard } from "react-icons/md";
 import { SiGoogleanalytics } from "react-icons/si";
+import { RiGeminiFill } from "react-icons/ri";
+import { FaRegBell } from "react-icons/fa";
+import { AiOutlineStock } from "react-icons/ai";
+import { FaRegMoneyBillAlt } from "react-icons/fa";
+
 
 const AsideDashboard = () => {
   const user = useUser();
@@ -20,7 +25,7 @@ const AsideDashboard = () => {
       <ul>
         <li className="mb-4 m-11 text-lg text-gray-400 hover:px-3 py-3 transition-all duration-100">
           <a href="/Dashboard" className="flex items-center space-x-2">
-            <MdDashboard className="text-2xl flex-shrink-0" />
+            <MdDashboard className="text-2xl flex-shrink-0 text-blue-500" />
             <span>Dashboard</span>
           </a>
         </li>
@@ -29,7 +34,7 @@ const AsideDashboard = () => {
           onClick={() => setIsAnalyticsOpen(!isAnalyticsOpen)}
         >
           <p className="flex items-center space-x-2 cursor-pointer">
-            <SiGoogleanalytics className="text-2xl flex-shrink-0" />
+            <SiGoogleanalytics className="text-2xl flex-shrink-0 text-red-400" />
             <span className={isAnalyticsOpen ? 'text-white' : 'text-gray-400'}>Analytics</span>
           </p>
         </li>
@@ -41,12 +46,10 @@ const AsideDashboard = () => {
             <a href="/Dashboard/Analytics/Income" className="block py-2 px-8 hover:bg-gray-600 rounded-xl text-gray-400 ">
               Income Analysis
             </a>
-            <a href="/analytics/savings-trends" className="block py-2 px-8 hover:bg-gray-600 rounded-xl text-gray-400 ">
-              Savings Trends
-            </a>
-            <a href="/analytics/custom-reports" className="block py-2 px-8 hover:bg-gray-600 rounded-xl text-gray-400 ">
+            
+            {/* <a href="/analytics/custom-reports" className="block py-2 px-8 hover:bg-gray-600 rounded-xl text-gray-400 ">
               Custom Reports
-            </a>
+            </a> */}
             <a href="/Dashboard/Analytics/CurrencyConversion" className="block py-2 px-8 hover:bg-gray-600 rounded-xl text-gray-400 ">
               Currency Conversion
             </a>
@@ -57,7 +60,7 @@ const AsideDashboard = () => {
           onClick={() => setIsSavingsOpen(!isSavingsOpen)}
         >
           <p className="flex items-center space-x-2 cursor-pointer">
-            <FaPiggyBank className="text-2xl flex-shrink-0" />
+            <FaPiggyBank className="text-2xl flex-shrink-0 text-pink-400" />
             <span className={isSavingsOpen ? 'text-white' : 'text-gray-400'}>Savings</span>
           </p>
         </li>
@@ -66,39 +69,57 @@ const AsideDashboard = () => {
             <a href="" className="block py-2 px-8 hover:bg-gray-600 rounded-xl text-gray-400 ">
               Goal Tracking
             </a>
-            <a href="/analytics/income-analysis" className="block py-2 px-8 hover:bg-gray-600 rounded-xl text-gray-400 ">
-              Investment Tips
-            </a>
+           
             <a href="/analytics/custom-reports" className="block py-2 px-8 hover:bg-gray-600 rounded-xl text-gray-400 ">
               Saving Accounts
             </a>
           </div>
         )}
-        <li
+       <a href='/Dashboard/Transactions'> <li
           className="mb-4 m-11 text-lg hover:pl-2 hover:pr-12 py-3 transition-all duration-100"
           onClick={() => setIsTransactionsOpen(!isTransactionsOpen)}
         >
           <p className="flex items-center space-x-2 cursor-pointer">
-            <MdCurrencyExchange className="text-2xl flex-shrink-0" />
+            <MdCurrencyExchange className="text-2xl flex-shrink-0 text-green-500" />
             <span className={isTransactionsOpen ? 'text-white' : 'text-gray-400'}>Transactions</span>
           </p>
-        </li>
-        {isTransactionsOpen && (
-          <div className="pl-4">
-            <a href="" className="block py-2 px-8 hover:bg-gray-600 rounded-xl text-gray-400 ">
-              Add/Edit Transaction
-            </a>
-            <a href="/analytics/income-analysis" className="block py-2 px-8 hover:bg-gray-600 rounded-xl text-gray-400 ">
-              Transaction History
-            </a>
-            <a href="/analytics/custom-reports" className="block py-2 px-8 hover:bg-gray-600 rounded-xl text-gray-400 ">
-              Categories
-            </a>
-          </div>
-        )}
+        </li> </a>
+        
+
         <li className="m-11 text-lg hover:px-3 py-3 transition-all duration-100">
-          <a href="/settings" className="flex items-center space-x-2">
-            <IoIosSettings className="text-2xl flex-shrink-0" />
+          <a href="/Dashboard/Ask-Ai" className="flex items-center space-x-2">
+          <RiGeminiFill  className="text-2xl flex-shrink-0 text-yellow-300" />
+            <span>Ask AI</span>
+          </a>
+        </li>
+
+        <li className="m-11 text-lg hover:px-3 py-3 transition-all duration-100">
+          <a href="/Dashboard/Bill-Reminder" className="flex items-center space-x-2">
+          <FaRegBell   className="text-2xl flex-shrink-0 text-yellow-500" />
+            <span>Bill Reminder/Alerts</span>
+          </a>
+        </li>
+
+        <li className="m-11 text-lg hover:px-3 py-3 transition-all duration-100">
+          <a href="/Dashboard/Stock_Chart" className="flex items-center space-x-2">
+          <AiOutlineStock    className="text-2xl flex-shrink-0 text-blue-600" />
+            <span>Stock Chart</span>
+          </a>
+        </li>
+
+        <li className="m-11 text-lg hover:px-3 py-3 transition-all duration-100">
+          <a href="/Dashboard/Tax_Calculator" className="flex items-center space-x-2">
+          <FaRegMoneyBillAlt    className="text-2xl flex-shrink-0 text-green-500" />
+            <span>Tax calculator</span>
+          </a>
+        </li>
+
+
+
+
+        <li className="m-11 text-lg hover:px-3 py-3 transition-all duration-100">
+          <a href="/Dashboard/Settings" className="flex items-center space-x-2">
+            <IoIosSettings className="text-2xl flex-shrink-0 text-gray-400" />
             <span>Settings</span>
           </a>
         </li>

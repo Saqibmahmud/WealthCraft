@@ -1,11 +1,10 @@
 'use client'
 import React from 'react'
-import { Footer } from 'flowbite-react'
+
 import { useAuth } from '@clerk/nextjs'
 
 const FooterComponent = () => {
 const auth= useAuth()
-
 
 
 

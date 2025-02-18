@@ -1,6 +1,6 @@
 import Image from "next/image";
 import NavbarComponent from "../../Components/Navbar/page";
-import SpinnerComponent from "../../Components/Spinner/page";
+
 import FooterComponent from "../../Components/Footer/page";
 import Homepage from "../../Components/HomePage/page";
 
@@ -14,7 +14,7 @@ export default function Home() {
     <>
       <NavbarComponent />
      
-      {loading ? <SpinnerComponent /> : null}
+      {/* {loading ? <SpinnerComponent /> : null} */}
       <Homepage/>
       <FooterComponent/>
     </>

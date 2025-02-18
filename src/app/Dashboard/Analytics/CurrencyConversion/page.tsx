@@ -4,6 +4,7 @@ import { FaArrowUp } from "react-icons/fa";
 import { Card } from 'flowbite-react';
 import { useAuth } from '@clerk/nextjs';
 import { currency_convert, currency_list } from '../../../../../lib/currency';
+import AsideDashboard from '../../../../../Components/Aside_Dashbar/page';
 
 const CurrencyConversion = () => {
   const { isSignedIn } = useAuth();
@@ -59,7 +60,10 @@ const CurrencyConversion = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-800">
+    <div className='flex bg-black'> 
+         <AsideDashboard/>
+    <div className="min-h-screen bg-gray-800 w-10/12 rounded-sm">
+   
       <div className="shadow bg-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <h1 className="text-2xl font-semibold text-white">Currency Conversion</h1>
@@ -159,7 +163,10 @@ const CurrencyConversion = () => {
           </Card>
         </div>
       </main>
-    </div>
+      </div>
+      </div>
+    
+
   );
 }
 
